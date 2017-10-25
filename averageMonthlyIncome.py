@@ -11,16 +11,14 @@ files = sc.wholeTextFiles(sys.argv[1])
 # Split the files by lines
 lines = files.flatMap(lambda file: file[1].splitlines())
 
-# We create a tuple for each line with key: the month, value: the revenue
-months_with_revenues = lines.map(lambda line: (line.split(' ')[0], int(line.split(' ')[1])))
+# Get the income values
+income_list = lines.map(lambda line: int(line.split(' ')[1]))
 
-# We group the revenue per month
-revenues_per_month = months_with_revenues.groupByKey()
+# Compute the income on the 1 year data
+total_income = income_list.reduce(lambda count1, count2: count1 + count2)
 
-average_income_per_month = revenues_per_month.map(lambda month_revenues: (month_revenues[0], sum(month_revenues[1])/len(month_revenues[1])))
-# Compute the average income per month
+# Compute the monthly average over 1 year (12 months in a year)
+average_monthly_income_on_1_year = total_income / 12
 
-result = average_income_per_month.collect()
-
-for res in result:
-  print(res)
+# Display the result
+print("Average monthly income of the shop in France (on a 1 year data):", average_monthly_income_on_1_year)
