@@ -56,13 +56,26 @@ total_revenue_per_store = income_list_with_store_as_key.reduceByKey(lambda incom
 
 ## Query 5
 # Prepare the data, by transforming the cityAsKey rdd as a tuple list with key: month, value: (store, income)
-income_list_with_month_as_key = cityAsKey.map(lambda income_line: (income_line[2], (income_line[1], income_line[3])))
+income_with_store_list_with_month_as_key = cityAsKey.map(lambda income_line: (income_line[2], (income_line[1], income_line[3])))
 
 # Find the best income for each month
-best_income_per_month = income_list_with_month_as_key.reduceByKey(lambda income_line1, income_line2: income_line1 if income_line1[1] > income_line2[1] else income_line2)
+best_income_per_month = income_with_store_list_with_month_as_key.reduceByKey(lambda income_line1, income_line2: income_line1 if income_line1[1] > income_line2[1] else income_line2)
 
 # Get the store name for each best income line of the month
 best_performance_store_per_month = best_income_per_month.mapValues(lambda income_line: income_line[0])
+
+
+# Query 6 (not required)
+# This query displays the average income of the shop in France (on a 1 year data) per month
+# Prepare the data, by transforming the cityAsKey rdd as a tuple list with key: month, value: income
+income_list_with_month_as_key = cityAsKey.map(lambda income_line: (income_line[2], income_line[3]))
+
+# Regroup the incomes per month
+incomes_per_month = income_list_with_month_as_key.groupByKey()
+
+# Compute the average income per month
+average_income_per_month = incomes_per_month.mapValues(lambda incomes: sum(incomes)/len(incomes))
+
 
 # Display the results
 # Query 1:
@@ -85,6 +98,11 @@ for store, income in total_revenue_per_store.collect():
   print(store, ": ", income)
 
 # Query 5:
-print("The store that achieves the best performance in each month:")
+print("\nThe store that achieves the best performance in each month:")
 for month, store in best_performance_store_per_month.collect():
   print(month, ": ", store)
+
+# Query 6:
+print("\nAverage income of the shop in France (on a 1 year data) per month:")
+for month, average_income in average_income_per_month.collect():
+  print(month, ": ", average_income)

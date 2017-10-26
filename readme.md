@@ -12,4 +12,5 @@ The goal is to write a small Spark script that allows to display different stati
 - Total revenue per city per year
 - Average monthly income of the shop in each city (on a 1 year data)
 - Total revenue per store per year
-- THe store that achiveves the best performance in each month
+- The store that achieves the best performance in each month
+- The average income of the stop in France (on a 1 year data) per month
